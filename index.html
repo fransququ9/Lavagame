@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Judul yang menarik dan mengandung kata kunci pencarian -->
+  <title>LavaGame - Main Game Online Gratis & Game 2 Player Seru</title>
+  
+  <!-- Deskripsi untuk snippet pencarian Google -->
+  <meta name="description" content="Mainkan ratusan game online gratis di LavaGame! Pilihan game 2 player 1 keyboard, balap mobil Drive Mad, basket, arcade, dan game horor 3D langsung di browser tanpa unduh.">
+  <meta name="keywords" content="lavagame, game online gratis, game 2 player, main game di browser, drive mad online, basket random, poki alternatif">
+  <meta name="author" content="LavaGame">
+
+  <!-- Open Graph (Tampilan kartu saat link dibagikan ke WhatsApp / medsos) -->
+  <meta property="og:title" content="LavaGame - Portal Game Online Gratis">
+  <meta property="og:description" content="Koleksi game browser seru: 2 Player, Balapan, Olahraga, dan Horor 3D tanpa install!">
+  <meta property="og:type" content="website">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header Navigasi -->
+  <header class="navbar">
+    <div class="logo">
+      <span class="logo-icon">🔥</span>
+      <span class="logo-text">Lava<span class="highlight">Game</span></span>
+    </div>
+    <input type="text" id="searchInput" placeholder="Cari game seru..." onkeyup="filterGames()">
+  </header>
+
+  <!-- Kontainer Grid Game -->
+  <main class="container">
+    <div class="game-grid" id="gameGrid"></div>
+  </main>
+
+  <!-- Modal Player Game -->
+  <div id="gameModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="modalGameTitle">Nama Game</span>
+        <div class="header-actions">
+          <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+          <button class="close-btn" onclick="closeGame()">&times; Tutup</button>
+        </div>
+      </div>
+      <iframe id="gameIframe" src="" frameborder="0" allow="autoplay; gamepad; fullscreen; screen-wake-lock; pointer-lock" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    // List game yang sudah bersih dan link-nya aman di-embed
+    const games = [
+      {
+        id: "smash-karts",
+        title: "Smash Karts",
+        category: "Multiplayer",
+        thumbnail: "https://images.unsplash.com/photo-1563089145-599997674d42?w=400&q=80",
+        url: "https://smashkarts.io/"
+      },
+      {
+        id: "basketball-stars",
+        title: "Basketball Stars",
+        category: "2 Player",
+        thumbnail: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80",
+        url: "https://ubg98.github.io/BasketballStars/"
+      },
+      {
+        id: "drive-mad",
+        title: "Drive Mad",
+        category: "Driving",
+        thumbnail: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=400&q=80",
+        url: "https://ubg98.github.io/DriveMad/"
+      },
+      {
+        id: "moto-x3m",
+        title: "Moto X3M",
+        category: "Action",
+        thumbnail: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400&q=80",
+        url: "https://html5.gamedistribution.com/bcacf81441bd4c7799a622171116ea9d/"
+      },
+      {
+        id: "granny-horror",
+        title: "Granny Horror 3D",
+        category: "Horror",
+        thumbnail: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=80",
+        url: "https://html5.gamedistribution.com/2a658c392b23482986d1e55ec04b7844/"
+      },
+      {
+       id: "slendrina-house",
+       title: "Slendrina Must Die",
+       category: "Horror",
+       thumbnail: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=80",
+       url: "https://html5.gamedistribution.com/b39ddfb1c0a049d5bf1c26b52c00d440/"
+      },
+      {
+        id: "subway-surfers",
+        title: "Subway Surfers",
+        category: "Action",
+        thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80",
+        url: "https://ubg98.github.io/SubwaySurfers/"
+      },
+      {
+        id: "basket-random",
+        title: "Basket Random",
+        category: "2 Player",
+        thumbnail: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80",
+        url: "https://html5.gamedistribution.com/bf1268dccb5d43e7970bb3edaa54afc8/"
+      },
+      {
+        id: "soccer-random",
+        title: "Soccer Random",
+        category: "2 Player",
+        thumbnail: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80",
+        url: "https://soccer-random-game.github.io/"
+      },
+      {
+        id: "pong",
+        title: "Pong 2 Player",
+        category: "2 Player",
+        thumbnail: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&q=80",
+        url: "./pong/index.html"
+      },
+      {
+        id: "snake",
+        title: "Retro Snake",
+        category: "Arcade",
+        thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80",
+        url: "./snake/index.html"
+      },
+      {
+        id: "2048",
+        title: "2048 Classic",
+        category: "Puzzle",
+        thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&q=80",
+        url: "./2048/index.html"
+      },
+      {
+        id: "tetris",
+        title: "Block Puzzle",
+        category: "Arcade",
+        thumbnail: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=400&q=80",
+        url: "https://chvin.github.io/react-tetris/"
+      },
+      {
+        id: "dino",
+        title: "T-Rex Runner",
+        category: "Arcade",
+        thumbnail: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=400&q=80",
+        url: "https://chromedino.com/"
+      }
+    ];
+
+    const grid = document.getElementById("gameGrid");
+
+    function renderGames(list) {
+      grid.innerHTML = "";
+      list.forEach(game => {
+        const card = document.createElement("div");
+        card.className = "game-card";
+        card.onclick = () => openGame(game.title, game.url);
+        card.innerHTML = `
+          <img src="${game.thumbnail}" alt="${game.title}">
+          <div class="game-info">
+            <span class="title">${game.title}</span>
+            <span class="category">${game.category}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openGame(title, url) {
+      document.getElementById("modalGameTitle").innerText = title;
+      document.getElementById("gameIframe").src = url;
+      document.getElementById("gameModal").style.display = "flex";
+    }
+
+    function closeGame() {
+      document.getElementById("gameModal").style.display = "none";
+      document.getElementById("gameIframe").src = "";
+    }
+
+    // --- FUNGSI FULLSCREEN DITARUH DI SINI ---
+    function toggleFullScreen() {
+      const modal = document.getElementById("gameModal");
+      if (!document.fullscreenElement) {
+        if (modal.requestFullscreen) {
+          modal.requestFullscreen();
+        } else if (modal.webkitRequestFullscreen) {
+          modal.webkitRequestFullscreen();
+        } else if (modal.msRequestFullscreen) {
+          modal.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function filterGames() {
+      const keyword = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = games.filter(g => 
+        g.title.toLowerCase().includes(keyword) || 
+        g.category.toLowerCase().includes(keyword)
+      );
+      renderGames(filtered);
+    }
+
+    renderGames(games);
+  </script>
+</body>
+</html>
