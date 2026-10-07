@@ -18,6 +18,42 @@
   <meta property="og:type" content="website">
   
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Styling tombol filter kategori */
+    .category-bar {
+      display: flex;
+      gap: 10px;
+      padding: 12px 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .category-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .cat-btn {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .cat-btn:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+    .cat-btn.active {
+      background: #f97316;
+      color: #ffffff;
+      border-color: #f97316;
+    }
+  </style>
 </head>
 <body>
 
@@ -29,6 +65,15 @@
     </div>
     <input type="text" id="searchInput" placeholder="Cari game seru..." onkeyup="filterGames()">
   </header>
+
+  <!-- Tombol Filter Kategori -->
+  <div class="category-bar">
+    <button class="cat-btn active" onclick="setCategory('All', this)">Semua</button>
+    <button class="cat-btn" onclick="setCategory('Retro', this)">GBA Retro</button>
+    <button class="cat-btn" onclick="setCategory('Horror', this)">Horror</button>
+    <button class="cat-btn" onclick="setCategory('Fun', this)">Fun / Casual</button>
+    <button class="cat-btn" onclick="setCategory('2 Player', this)">2 Player</button>
+  </div>
 
   <!-- Kontainer Grid Game -->
   <main class="container">
@@ -102,11 +147,11 @@
         url: "https://html5.gamedistribution.com/2a658c392b23482986d1e55ec04b7844/"
       },
       {
-       id: "slope-3d",
-       title: "Slope 3D",
-       category: "Arcade",
-       thumbnail: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&q=80",
-       url: "https://kdata1.com/2020/05/slope/"
+        id: "slope-3d",
+        title: "Slope 3D",
+        category: "Arcade",
+        thumbnail: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&q=80",
+        url: "https://kdata1.com/2020/05/slope/"
       },
       {
         id: "subway-surfers",
@@ -174,6 +219,7 @@
     ];
 
     const grid = document.getElementById("gameGrid");
+    let activeCategory = 'All';
 
     function renderGames(list) {
       grid.innerHTML = "";
@@ -221,12 +267,34 @@
       }
     }
 
+    // Fungsi klik tombol kategori
+    function setCategory(cat, element) {
+      activeCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+      filterGames();
+    }
+
+    // Fungsi filter gabungan pencarian dan kategori
     function filterGames() {
       const keyword = document.getElementById("searchInput").value.toLowerCase();
-      const filtered = games.filter(g => 
-        g.title.toLowerCase().includes(keyword) || 
-        g.category.toLowerCase().includes(keyword)
-      );
+      
+      const filtered = games.filter(g => {
+        const matchSearch = g.title.toLowerCase().includes(keyword) || g.category.toLowerCase().includes(keyword);
+        
+        let matchCategory = false;
+        if (activeCategory === 'All') {
+          matchCategory = true;
+        } else if (activeCategory === 'Fun') {
+          // Menggabungkan genre santai ke dalam kategori Fun
+          matchCategory = ['Arcade', 'Driving', 'Action', 'Puzzle', 'Multiplayer'].includes(g.category);
+        } else {
+          matchCategory = g.category.toLowerCase() === activeCategory.toLowerCase();
+        }
+
+        return matchSearch && matchCategory;
+      });
+
       renderGames(filtered);
     }
 
